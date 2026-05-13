@@ -1,0 +1,23 @@
+# Estado de Terraform (nunca al repositorio)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Archivos con valores sensibles
+terraform.tfvars
+*.auto.tfvars
+
+# Plan files
+tfplan
+*.tfplan
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
