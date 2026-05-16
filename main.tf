@@ -13,15 +13,8 @@ locals {
 module "ecr" {
   source = "./modules/ecr"
 
-  project_name              = var.project_name
-  microservices             = toset(keys(var.microservices))
-  image_tag_mutability      = "MUTABLE"
-  scan_on_push              = true
-  enable_lifecycle_policy   = true
-  max_image_count           = 10
-  enable_cross_account_access = false
-
-  tags = var.tags
+  project_name  = var.project_name
+  microservices = toset(keys(var.microservices))
 }
 
 # VPC
@@ -31,9 +24,6 @@ module "vpc" {
   project_name       = var.project_name
   vpc_cidr           = var.vpc_cidr
   availability_zones = var.availability_zones
-  enable_nat_gateway = true
-
-  tags = var.tags
 }
 
 # Security Groups
@@ -42,19 +32,13 @@ module "security_groups" {
 
   project_name = var.project_name
   vpc_id       = module.vpc.vpc_id
-
-  tags = var.tags
 }
 
 # ECS Cluster
 module "ecs_cluster" {
   source = "./modules/ecs-cluster"
 
-  project_name              = var.project_name
-  enable_container_insights = true
-  log_retention_days        = 30
-
-  tags = var.tags
+  project_name = var.project_name
 }
 
 # Application Load Balancer (subnet pública)
@@ -74,24 +58,15 @@ module "alb" {
       priority          = index(keys(var.microservices), service_name) + 1
     }
   }
-
-  enable_deletion_protection = false
-
-  tags = var.tags
 }
 
 # RDS PostgreSQL (subnet privada)
 module "rds" {
   source = "./modules/rds"
 
-  project_name          = var.project_name
-  subnet_ids            = module.vpc.private_subnet_ids
-  security_group_id     = module.security_groups.rds_security_group_id
-  instance_class        = var.rds_instance_class
-  allocated_storage     = var.rds_allocated_storage
-  max_allocated_storage = var.rds_max_allocated_storage
-
-  tags = var.tags
+  project_name      = var.project_name
+  subnet_ids        = module.vpc.private_subnet_ids
+  security_group_id = module.security_groups.rds_security_group_id
 }
 
 # ECS Services (subnet privada, Fargate)
@@ -128,16 +103,6 @@ module "ecs_services" {
   }
 
   secrets_manager_arns = [module.rds.master_user_secret_arn]
-
-  enable_autoscaling  = var.enable_autoscaling
-  min_capacity        = var.min_capacity
-  max_capacity        = var.max_capacity
-  cpu_target_value    = 70
-  memory_target_value = 80
-
-  tags = var.tags
-
-  depends_on = [module.alb, module.rds]
 }
 
 # API Gateway
@@ -145,38 +110,20 @@ module "api_gateway" {
   source = "./modules/api-gateway"
 
   project_name = var.project_name
-  stage_name   = var.api_stage_name
   alb_dns_name = module.alb.alb_dns_name
 
   services = {
     for service_name in keys(var.microservices) :
     service_name => {}
   }
-
-  enable_xray_tracing    = false
-  log_retention_days     = 30
-  logging_level          = "INFO"
-  enable_data_trace      = false
-  throttling_burst_limit = 5000
-  throttling_rate_limit  = 10000
-  enable_cors            = true
-
-  tags = var.tags
-
-  depends_on = [module.alb, module.ecs_services]
 }
 
 # Amplify (Frontend NextJS)
 module "amplify" {
   source = "./modules/amplify"
 
-  project_name     = var.project_name
-  repository_url   = var.amplify_repository
-  github_token     = var.amplify_github_token
-  branch_name      = var.amplify_branch
-  api_gateway_url  = module.api_gateway.api_endpoint
-
-  tags = var.tags
-
-  depends_on = [module.api_gateway]
+  project_name    = var.project_name
+  repository_url  = var.amplify_repository
+  github_token    = var.amplify_github_token
+  api_gateway_url = module.api_gateway.api_endpoint
 }

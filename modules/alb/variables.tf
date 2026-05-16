@@ -26,15 +26,3 @@ variable "services" {
     priority          = number
   }))
 }
-
-variable "enable_deletion_protection" {
-  description = "Habilitar protección contra eliminación"
-  type        = bool
-  default     = true
-}
-
-variable "tags" {
-  description = "Tags comunes para todos los recursos"
-  type        = map(string)
-  default     = {}
-}

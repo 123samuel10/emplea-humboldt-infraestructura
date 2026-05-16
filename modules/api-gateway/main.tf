@@ -5,8 +5,6 @@ resource "aws_api_gateway_rest_api" "main" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-
-  tags = var.tags
 }
 
 resource "aws_api_gateway_resource" "services" {
@@ -104,15 +102,13 @@ resource "aws_api_gateway_deployment" "main" {
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
   name              = "/aws/apigateway/${var.project_name}"
-  retention_in_days = var.log_retention_days
-
-  tags = var.tags
+  retention_in_days = 7
 }
 
 resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
-  stage_name    = var.stage_name
+  stage_name    = "prd"
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway.arn
@@ -126,10 +122,6 @@ resource "aws_api_gateway_stage" "main" {
       responseLength = "$context.responseLength"
     })
   }
-
-  xray_tracing_enabled = var.enable_xray_tracing
-
-  tags = var.tags
 }
 
 resource "aws_api_gateway_method_settings" "main" {
@@ -139,10 +131,9 @@ resource "aws_api_gateway_method_settings" "main" {
 
   settings {
     metrics_enabled        = true
-    logging_level          = var.logging_level
-    data_trace_enabled     = var.enable_data_trace
-    throttling_burst_limit = var.throttling_burst_limit
-    throttling_rate_limit  = var.throttling_rate_limit
+    logging_level          = "INFO"
+    throttling_burst_limit = 500
+    throttling_rate_limit  = 1000
   }
 }
 
@@ -152,9 +143,9 @@ resource "aws_api_gateway_gateway_response" "cors" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   response_type = each.key
 
-  response_parameters = var.enable_cors ? {
+  response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
     "gatewayresponse.header.Access-Control-Allow-Headers" = "'*'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'*'"
-  } : {}
+  }
 }

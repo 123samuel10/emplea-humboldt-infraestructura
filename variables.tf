@@ -92,49 +92,6 @@ variable "microservices" {
   }
 }
 
-variable "enable_autoscaling" {
-  description = "Habilitar auto scaling para los servicios ECS"
-  type        = bool
-  default     = true
-}
-
-variable "min_capacity" {
-  description = "Capacidad mínima para auto scaling"
-  type        = number
-  default     = 1
-}
-
-variable "max_capacity" {
-  description = "Capacidad máxima para auto scaling"
-  type        = number
-  default     = 2
-}
-
-variable "api_stage_name" {
-  description = "Nombre del stage de API Gateway"
-  type        = string
-  default     = "prd"
-}
-
-# RDS
-variable "rds_instance_class" {
-  description = "Clase de instancia RDS PostgreSQL"
-  type        = string
-  default     = "db.t3.micro"
-}
-
-variable "rds_allocated_storage" {
-  description = "Almacenamiento inicial en GB"
-  type        = number
-  default     = 20
-}
-
-variable "rds_max_allocated_storage" {
-  description = "Almacenamiento máximo para autoscaling en GB"
-  type        = number
-  default     = 100
-}
-
 # Amplify
 variable "amplify_repository" {
   description = "URL del repositorio GitHub del frontend NextJS"
@@ -145,20 +102,4 @@ variable "amplify_github_token" {
   description = "GitHub personal access token para Amplify"
   type        = string
   sensitive   = true
-}
-
-variable "amplify_branch" {
-  description = "Rama del repositorio a desplegar en producción"
-  type        = string
-  default     = "main"
-}
-
-variable "tags" {
-  description = "Tags comunes para todos los recursos"
-  type        = map(string)
-  default = {
-    Project     = "EmpleaHumboldt"
-    ManagedBy   = "Terraform"
-    Environment = "production"
-  }
 }

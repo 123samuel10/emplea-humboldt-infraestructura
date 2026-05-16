@@ -4,12 +4,6 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [var.security_group_id]
   subnets            = var.subnet_ids
-
-  enable_deletion_protection = var.enable_deletion_protection
-  enable_http2                     = true
-  enable_cross_zone_load_balancing = true
-
-  tags = merge(var.tags, { Name = "${var.project_name}-alb" })
 }
 
 resource "aws_lb_target_group" "services" {
@@ -33,11 +27,6 @@ resource "aws_lb_target_group" "services" {
   }
 
   deregistration_delay = 30
-
-  tags = merge(var.tags, {
-    Name    = "${var.project_name}-${each.key}-tg"
-    Service = each.key
-  })
 }
 
 resource "aws_lb_listener" "http" {
@@ -53,8 +42,6 @@ resource "aws_lb_listener" "http" {
       status_code  = "404"
     }
   }
-
-  tags = var.tags
 }
 
 resource "aws_lb_listener_rule" "services" {
@@ -73,6 +60,4 @@ resource "aws_lb_listener_rule" "services" {
       values = ["/${each.key}/*", "/${each.key}"]
     }
   }
-
-  tags = merge(var.tags, { Service = each.key })
 }

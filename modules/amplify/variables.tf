@@ -14,19 +14,7 @@ variable "github_token" {
   sensitive   = true
 }
 
-variable "branch_name" {
-  description = "Rama del repositorio a desplegar"
-  type        = string
-  default     = "main"
-}
-
 variable "api_gateway_url" {
-  description = "URL del API Gateway para inyectar en el frontend"
+  description = "URL del API Gateway"
   type        = string
-}
-
-variable "tags" {
-  description = "Tags comunes para todos los recursos"
-  type        = map(string)
-  default     = {}
 }

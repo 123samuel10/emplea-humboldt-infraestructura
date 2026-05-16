@@ -19,18 +19,17 @@ variable "cluster_name" {
 }
 
 variable "container_image" {
-  description = "Imagen del contenedor (URI de ECR)"
+  description = "Imagen del contenedor"
   type        = string
 }
 
 variable "container_port" {
   description = "Puerto del contenedor"
   type        = number
-  default     = 8000
 }
 
 variable "task_cpu" {
-  description = "CPU para el task (256, 512, 1024, 2048, 4096)"
+  description = "CPU para el task"
   type        = string
   default     = "256"
 }
@@ -44,7 +43,7 @@ variable "task_memory" {
 variable "desired_count" {
   description = "Número deseado de tareas"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "private_subnet_ids" {
@@ -53,7 +52,7 @@ variable "private_subnet_ids" {
 }
 
 variable "security_group_id" {
-  description = "ID del security group para las tareas ECS"
+  description = "ID del security group"
   type        = string
 }
 
@@ -73,67 +72,19 @@ variable "aws_region" {
 }
 
 variable "environment_variables" {
-  description = "Variables de entorno para el contenedor"
+  description = "Variables de entorno"
   type        = map(string)
   default     = {}
 }
 
 variable "secrets" {
-  description = "Secrets desde Secrets Manager (formato: ARN:json_key::)"
+  description = "Secrets desde Secrets Manager"
   type        = map(string)
   default     = {}
 }
 
 variable "secrets_manager_arns" {
-  description = "ARNs de los secrets en Secrets Manager a los que el task necesita acceder"
+  description = "ARNs de los secrets en Secrets Manager"
   type        = list(string)
   default     = []
-}
-
-variable "health_check_command" {
-  description = "Comando para health check del contenedor"
-  type        = list(string)
-  default     = null
-}
-
-variable "enable_execute_command" {
-  description = "Habilitar ECS Exec para debugging"
-  type        = bool
-  default     = false
-}
-
-variable "enable_autoscaling" {
-  description = "Habilitar auto scaling"
-  type        = bool
-  default     = true
-}
-
-variable "min_capacity" {
-  description = "Capacidad mínima para auto scaling"
-  type        = number
-  default     = 2
-}
-
-variable "max_capacity" {
-  description = "Capacidad máxima para auto scaling"
-  type        = number
-  default     = 6
-}
-
-variable "cpu_target_value" {
-  description = "Target value de CPU para auto scaling (%)"
-  type        = number
-  default     = 70
-}
-
-variable "memory_target_value" {
-  description = "Target value de memoria para auto scaling (%)"
-  type        = number
-  default     = 80
-}
-
-variable "tags" {
-  description = "Tags comunes para todos los recursos"
-  type        = map(string)
-  default     = {}
 }
