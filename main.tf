@@ -74,11 +74,14 @@ module "ecs_services" {
   source   = "./modules/ecs-service"
   for_each = var.microservices
 
-  project_name    = var.project_name
-  service_name    = each.key
-  cluster_id      = module.ecs_cluster.cluster_id
-  cluster_name    = module.ecs_cluster.cluster_name
-  container_image = each.value.container_image
+  project_name = var.project_name
+  service_name = each.key
+  cluster_id   = module.ecs_cluster.cluster_id
+  cluster_name = module.ecs_cluster.cluster_name
+  # La URL de la imagen se construye desde el repositorio ECR que crea esta misma
+  # infra (no se hardcodea). El CD de cada microservicio publica el tag :latest y
+  # luego hace "ecs update-service --force-new-deployment" para que ECS lo tome.
+  container_image = "${module.ecr.repository_urls[each.key]}:latest"
   container_port  = each.value.container_port
   task_cpu        = each.value.cpu
   task_memory     = each.value.memory
