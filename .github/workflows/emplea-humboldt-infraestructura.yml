@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:  # Habilita ejecución manual desde GitHub UI
 
 env:
   AWS_REGION: us-east-1
