@@ -9,9 +9,19 @@ resource "aws_lb" "main" {
 resource "aws_lb_target_group" "services" {
   for_each = var.services
 
-  # Usar name_prefix para nombres cortos autogenerados (máx 32 caracteres)
-  # Reemplazar guiones bajos por guiones para cumplir con las reglas de AWS
-  name_prefix = substr(replace("${substr(var.project_name, 0, 8)}-${replace(each.key, "_", "-")}-", "/[^a-zA-Z0-9-]/", ""), 0, 26)
+  # Mapeo de nombres cortos para cumplir límite de 32 caracteres
+  # y reemplazar guiones bajos por guiones
+  name = lookup(
+    {
+      autenticacion         = "eh-auth-tg"
+      empleos               = "eh-emp-tg"
+      postulaciones         = "eh-post-tg"
+      seguimiento_practicas = "eh-seg-tg"
+      notificaciones        = "eh-noti-tg"
+    },
+    each.key,
+    substr(replace(each.key, "_", "-"), 0, 28)
+  )
   port        = each.value.port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
