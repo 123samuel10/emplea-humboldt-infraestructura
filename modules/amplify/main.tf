@@ -16,7 +16,7 @@ resource "aws_amplify_app" "main" {
           commands:
             - npm run build
       artifacts:
-        baseDirectory: .next
+        baseDirectory: .next/standalone
         files:
           - '**/*'
       cache:
