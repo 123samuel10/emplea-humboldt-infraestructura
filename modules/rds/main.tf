@@ -43,7 +43,7 @@ resource "aws_db_instance" "main" {
   # Free tier: 0 días de retención (sin backups automáticos)
   backup_retention_period = 0
   # backup_window se omite cuando retention = 0
-  maintenance_window      = "Mon:04:00-Mon:05:00"
+  maintenance_window = "Mon:04:00-Mon:05:00"
 
   deletion_protection = false
   skip_final_snapshot = true
