@@ -9,7 +9,9 @@ resource "aws_lb" "main" {
 resource "aws_lb_target_group" "services" {
   for_each = var.services
 
-  name        = "${var.project_name}-${each.key}-tg"
+  # Usar name_prefix para nombres cortos autogenerados (máx 32 caracteres)
+  # Reemplazar guiones bajos por guiones para cumplir con las reglas de AWS
+  name_prefix = substr(replace("${substr(var.project_name, 0, 8)}-${replace(each.key, "_", "-")}-", "/[^a-zA-Z0-9-]/", ""), 0, 26)
   port        = each.value.port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -27,6 +29,10 @@ resource "aws_lb_target_group" "services" {
   }
 
   deregistration_delay = 30
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_lb_listener" "http" {
