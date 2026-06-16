@@ -40,11 +40,14 @@ resource "aws_db_instance" "main" {
 
   multi_az = false
 
-  # Free tier permite máximo 1 día de retención de backups
-  backup_retention_period = 1
-  backup_window           = "03:00-04:00"
+  # Free tier: 0 días de retención (sin backups automáticos)
+  backup_retention_period = 0
+  # backup_window se omite cuando retention = 0
   maintenance_window      = "Mon:04:00-Mon:05:00"
 
   deletion_protection = false
   skip_final_snapshot = true
+
+  # Asegurar que no se cree réplicas (no soportado en free tier)
+  publicly_accessible = false
 }
