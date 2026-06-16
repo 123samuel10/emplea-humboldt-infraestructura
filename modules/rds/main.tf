@@ -48,6 +48,6 @@ resource "aws_db_instance" "main" {
   deletion_protection = false
   skip_final_snapshot = true
 
-  # Asegurar que no se cree réplicas (no soportado en free tier)
-  publicly_accessible = false
+  # Para desarrollo: hacer RDS públicamente accesible
+  publicly_accessible = true
 }
