@@ -1,6 +1,10 @@
 resource "aws_db_subnet_group" "main" {
-  name       = "${var.project_name}-db-subnet-group"
+  name       = "${var.project_name}-db-subnet-group-public"
   subnet_ids = var.subnet_ids
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_db_parameter_group" "main" {
@@ -19,7 +23,7 @@ resource "aws_db_parameter_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier = "${var.project_name}-postgres"
+  identifier = "${var.project_name}-postgres-v2"
 
   engine         = "postgres"
   engine_version = "15.7"
