@@ -1,10 +1,6 @@
 resource "aws_db_subnet_group" "main" {
-  name       = "${var.project_name}-db-subnet-group-public"
+  name       = "${var.project_name}-db-subnet-group"
   subnet_ids = var.subnet_ids
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 resource "aws_db_parameter_group" "main" {
@@ -23,7 +19,7 @@ resource "aws_db_parameter_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier = "${var.project_name}-postgres-v2"
+  identifier = "${var.project_name}-postgres"
 
   engine         = "postgres"
   engine_version = "15.7"
@@ -52,6 +48,6 @@ resource "aws_db_instance" "main" {
   deletion_protection = false
   skip_final_snapshot = true
 
-  # Para desarrollo: hacer RDS públicamente accesible
-  publicly_accessible = true
+  # Asegurar que no se cree réplicas (no soportado en free tier)
+  publicly_accessible = false
 }

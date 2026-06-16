@@ -60,12 +60,12 @@ module "alb" {
   }
 }
 
-# RDS PostgreSQL (subnet pública para desarrollo - permite acceso externo)
+# RDS PostgreSQL (subnet privada)
 module "rds" {
   source = "./modules/rds"
 
   project_name      = var.project_name
-  subnet_ids        = module.vpc.public_subnet_ids
+  subnet_ids        = module.vpc.private_subnet_ids
   security_group_id = module.security_groups.rds_security_group_id
 }
 
